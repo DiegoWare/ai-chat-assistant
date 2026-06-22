@@ -5,7 +5,7 @@ import { CHAT_MODELS, getModel, type ChatModelId } from "@/lib/providers";
 export const maxDuration = 60;
 
 function isChatModelId(value: unknown): value is ChatModelId {
-  return value === "claude" || value === "gemini";
+  return value === "openai" || value === "gemini";
 }
 
 function getHttpStatusFromError(error: unknown): number {

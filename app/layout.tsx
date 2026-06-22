@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "AI Chat Assistant",
-  description: "Chat con Claude y Gemini usando streaming",
+  description: "Chat con ChatGPT y Gemini usando streaming",
 };
 
 export default function RootLayout({

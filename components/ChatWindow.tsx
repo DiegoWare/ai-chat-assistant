@@ -1,7 +1,8 @@
 "use client";
 
 import { useChat } from "ai/react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import ErrorBanner from "@/components/ErrorBanner";
 import MessageBubble from "@/components/MessageBubble";
 import ModelSelector from "@/components/ModelSelector";
 import type { ChatModelId } from "@/lib/providers";
@@ -9,11 +10,24 @@ import type { ChatModelId } from "@/lib/providers";
 const DEFAULT_SYSTEM_PROMPT =
   "Eres un asistente útil, claro y conciso. Responde en el mismo idioma que use el usuario.";
 
+async function parseApiError(response: Response): Promise<string | null> {
+  try {
+    const data = (await response.json()) as { error?: string };
+    return data.error ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export default function ChatWindow() {
-  const [model, setModel] = useState<ChatModelId>("claude");
+  const [model, setModel] = useState<ChatModelId>("openai");
   const [systemPrompt, setSystemPrompt] = useState(DEFAULT_SYSTEM_PROMPT);
   const [showSystemPrompt, setShowSystemPrompt] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
+  const [emptySubmitAttempt, setEmptySubmitAttempt] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const clearError = useCallback(() => setApiError(null), []);
 
   const {
     messages,
@@ -31,33 +45,75 @@ export default function ChatWindow() {
       model,
       systemPrompt,
     },
+    onResponse: async (response) => {
+      if (!response.ok) {
+        const message =
+          (await parseApiError(response)) ??
+          "No se pudo conectar con el servidor. Intenta de nuevo.";
+        setApiError(message);
+      }
+    },
+    onError: (chatError) => {
+      setApiError(chatError.message || "Ocurrió un error inesperado.");
+    },
+    onFinish: () => {
+      clearError();
+    },
   });
 
   const isBusy = isLoading || status === "submitted" || status === "streaming";
+  const displayError = apiError ?? error?.message ?? null;
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isBusy]);
+  }, [messages, isBusy, displayError]);
+
+  useEffect(() => {
+    if (input.trim()) {
+      setEmptySubmitAttempt(false);
+    }
+  }, [input]);
 
   const handleNewConversation = () => {
     setMessages([]);
     setInput("");
+    clearError();
+    setEmptySubmitAttempt(false);
   };
 
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!input.trim() || isBusy) return;
+
+    if (!input.trim()) {
+      setEmptySubmitAttempt(true);
+      return;
+    }
+
+    if (isBusy) return;
+
+    clearError();
     handleSubmit(event);
+  };
+
+  const onInputChange = (
+    event: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>,
+  ) => {
+    handleInputChange(event);
+    if (apiError) clearError();
   };
 
   return (
     <div className="flex h-dvh flex-col bg-gray-50">
+      {displayError && (
+        <ErrorBanner message={displayError} onDismiss={clearError} />
+      )}
+
       <header className="border-b border-gray-200 bg-white px-4 py-4 shadow-sm sm:px-6">
         <div className="mx-auto flex max-w-3xl flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h1 className="text-xl font-semibold text-gray-900">AI Chat Assistant</h1>
             <p className="text-sm text-gray-500">
-              Conversa con Claude o Gemini en tiempo real
+              Conversa con ChatGPT o Gemini en tiempo real
             </p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
@@ -124,14 +180,8 @@ export default function ChatWindow() {
                   <span className="h-2 w-2 animate-bounce rounded-full bg-indigo-400 [animation-delay:-0.15s]" />
                   <span className="h-2 w-2 animate-bounce rounded-full bg-indigo-400" />
                 </span>
-                <span>Escribiendo...</span>
+                <span>{status === "submitted" ? "Pensando..." : "Escribiendo..."}</span>
               </div>
-            </div>
-          )}
-
-          {error && (
-            <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-              {error.message}
             </div>
           )}
 
@@ -140,30 +190,44 @@ export default function ChatWindow() {
       </main>
 
       <footer className="border-t border-gray-200 bg-white px-4 py-4 sm:px-6">
-        <form onSubmit={onSubmit} className="mx-auto flex max-w-3xl gap-2">
-          <textarea
-            value={input}
-            onChange={handleInputChange}
-            disabled={isBusy}
-            rows={1}
-            placeholder="Escribe tu mensaje..."
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                if (input.trim() && !isBusy) {
-                  onSubmit(e as unknown as React.FormEvent<HTMLFormElement>);
+        <form onSubmit={onSubmit} className="mx-auto max-w-3xl">
+          <div className="flex gap-2">
+            <textarea
+              value={input}
+              onChange={onInputChange}
+              disabled={isBusy}
+              rows={1}
+              placeholder={isBusy ? "Esperando respuesta..." : "Escribe tu mensaje..."}
+              aria-invalid={emptySubmitAttempt}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  if (input.trim() && !isBusy) {
+                    onSubmit(e as unknown as React.FormEvent<HTMLFormElement>);
+                  } else if (!input.trim()) {
+                    setEmptySubmitAttempt(true);
+                  }
                 }
-              }
-            }}
-            className="max-h-32 min-h-[44px] flex-1 resize-none rounded-xl border border-gray-300 px-4 py-3 text-sm text-gray-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 disabled:bg-gray-100"
-          />
-          <button
-            type="submit"
-            disabled={isBusy || !input.trim()}
-            className="rounded-xl bg-indigo-600 px-5 py-3 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-indigo-300"
-          >
-            Enviar
-          </button>
+              }}
+              className={`max-h-32 min-h-[44px] flex-1 resize-none rounded-xl border px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:bg-gray-100 ${
+                emptySubmitAttempt
+                  ? "border-amber-400 focus:border-amber-400 focus:ring-amber-400/20"
+                  : "border-gray-300 focus:border-indigo-500 focus:ring-indigo-500/20"
+              }`}
+            />
+            <button
+              type="submit"
+              disabled={isBusy || !input.trim()}
+              className="rounded-xl bg-indigo-600 px-5 py-3 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-indigo-300"
+            >
+              Enviar
+            </button>
+          </div>
+          {emptySubmitAttempt && (
+            <p className="mt-2 text-xs text-amber-600">
+              Escribe un mensaje antes de enviar.
+            </p>
+          )}
         </form>
       </footer>
     </div>

@@ -1,16 +1,16 @@
-import { createAnthropic } from "@ai-sdk/anthropic";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { createOpenAI } from "@ai-sdk/openai";
 import type { LanguageModelV1 } from "@ai-sdk/provider";
 
-export type ChatModelId = "claude" | "gemini";
+export type ChatModelId = "openai" | "gemini";
 
 export const CHAT_MODELS: Record<
   ChatModelId,
   { label: string; modelId: string }
 > = {
-  claude: {
-    label: "Claude Sonnet",
-    modelId: "claude-3-5-sonnet-20241022",
+  openai: {
+    label: "ChatGPT",
+    modelId: "gpt-4o-mini",
   },
   gemini: {
     label: "Gemini",
@@ -18,8 +18,8 @@ export const CHAT_MODELS: Record<
   },
 };
 
-const anthropic = createAnthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
+const openai = createOpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
 const google = createGoogleGenerativeAI({
@@ -29,8 +29,8 @@ const google = createGoogleGenerativeAI({
 export function getModel(model: ChatModelId): LanguageModelV1 {
   const { modelId } = CHAT_MODELS[model];
 
-  if (model === "claude") {
-    return anthropic(modelId);
+  if (model === "openai") {
+    return openai(modelId);
   }
 
   return google(modelId);
