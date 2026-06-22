@@ -2,8 +2,6 @@
 
 A full-stack web chat app that lets you talk to **ChatGPT (OpenAI)** and **Gemini (Google)** from a single interface, with **real-time streaming** responses and **image understanding** (vision). Built with Next.js 14 and the Vercel AI SDK.
 
-![App preview](./docs/preview.png)
-
 **Live demo:** https://ai-chat-assistant-neon-chi.vercel.app
 
 ---
@@ -122,8 +120,6 @@ ai-chat-assistant/
 │   └── ErrorBanner.tsx      # User-visible errors
 ├── lib/
 │   └── providers.ts         # Model configuration
-├── docs/
-│   └── preview.png
 ├── .env.example
 └── README.md
 ```
