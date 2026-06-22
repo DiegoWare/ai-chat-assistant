@@ -93,6 +93,22 @@ export async function POST(req: Request) {
       );
     }
 
+    const lastMessage = messages[messages.length - 1];
+    const hasAttachments =
+      Array.isArray(lastMessage.experimental_attachments) &&
+      lastMessage.experimental_attachments.length > 0;
+
+    if (
+      lastMessage.role === "user" &&
+      !lastMessage.content?.trim() &&
+      !hasAttachments
+    ) {
+      return Response.json(
+        { error: "Message must include text or an image." },
+        { status: 400 },
+      );
+    }
+
     if (!isChatModelId(model)) {
       return Response.json(
         {

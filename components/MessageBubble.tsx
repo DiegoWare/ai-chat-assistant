@@ -1,4 +1,5 @@
 import type { Message } from "ai";
+import Image from "next/image";
 import MarkdownContent from "@/components/MarkdownContent";
 
 interface MessageBubbleProps {
@@ -6,11 +7,23 @@ interface MessageBubbleProps {
   isStreaming?: boolean;
 }
 
+function isImageAttachment(contentType?: string) {
+  return contentType?.startsWith("image/") ?? false;
+}
+
 export default function MessageBubble({
   message,
   isStreaming = false,
 }: MessageBubbleProps) {
   const isUser = message.role === "user";
+  const attachments = message.experimental_attachments ?? [];
+  const imageAttachments = attachments.filter((file) =>
+    isImageAttachment(file.contentType),
+  );
+  const showDefaultPrompt =
+    isUser &&
+    message.content === "What's in this image?" &&
+    imageAttachments.length > 0;
 
   return (
     <div className={`flex gap-3 ${isUser ? "flex-row-reverse" : "flex-row"}`}>
@@ -40,10 +53,33 @@ export default function MessageBubble({
           {isUser ? "You" : "Assistant"}
         </p>
 
+        {imageAttachments.length > 0 && (
+          <div
+            className={`mb-3 flex flex-wrap gap-2 ${isUser ? "justify-end" : "justify-start"}`}
+          >
+            {imageAttachments.map((file, index) => (
+              <div
+                key={`${file.url}-${index}`}
+                className="relative h-32 w-32 overflow-hidden rounded-lg border border-white/20"
+              >
+                <Image
+                  src={file.url}
+                  alt={file.name ?? `Image ${index + 1}`}
+                  fill
+                  unoptimized
+                  className="object-cover"
+                />
+              </div>
+            ))}
+          </div>
+        )}
+
         {isUser ? (
-          <p className="whitespace-pre-wrap break-words text-sm leading-relaxed">
-            {message.content}
-          </p>
+          message.content && !showDefaultPrompt ? (
+            <p className="whitespace-pre-wrap break-words text-sm leading-relaxed">
+              {message.content}
+            </p>
+          ) : null
         ) : (
           <div className="text-sm">
             <MarkdownContent content={message.content} variant="assistant" />

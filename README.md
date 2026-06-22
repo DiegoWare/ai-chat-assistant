@@ -1,6 +1,6 @@
 # AI Chat Assistant
 
-A full-stack web chat app that lets you talk to **ChatGPT (OpenAI)** and **Gemini (Google)** from a single interface, with **real-time streaming** responses. Built with Next.js 14 and the Vercel AI SDK.
+A full-stack web chat app that lets you talk to **ChatGPT (OpenAI)** and **Gemini (Google)** from a single interface, with **real-time streaming** responses and **image understanding** (vision). Built with Next.js 14 and the Vercel AI SDK.
 
 ![App preview](./docs/preview.png)
 
@@ -14,6 +14,7 @@ This is a **portfolio project** by [Diego Gonzalez](https://github.com/DiegoWare
 
 - Multi-provider AI integration (OpenAI + Google) behind one unified API
 - Real-time streaming UX similar to ChatGPT
+- Image attachments with multimodal vision (JPEG, PNG, WebP, GIF)
 - Clean full-stack architecture with Next.js App Router
 - Production-ready error handling and responsive UI
 - Markdown rendering for rich assistant responses
