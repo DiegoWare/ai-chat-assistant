@@ -4,7 +4,7 @@ A full-stack web chat app that lets you talk to **ChatGPT (OpenAI)** and **Gemin
 
 ![App preview](./docs/preview.png)
 
-**Live demo:** _Coming soon — will be added after Vercel deploy_
+**Live demo:** https://ai-chat-assistant-neon-chi.vercel.app
 
 ---
 
