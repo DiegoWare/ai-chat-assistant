@@ -22,7 +22,7 @@ export default function MessageBubble({
         }`}
         aria-hidden="true"
       >
-        {isUser ? "DG" : "AI"}
+        {isUser ? "U" : "AI"}
       </div>
 
       <div
@@ -37,7 +37,7 @@ export default function MessageBubble({
             isUser ? "text-violet-200" : "text-slate-400"
           }`}
         >
-          {isUser ? "Tú" : "Asistente"}
+          {isUser ? "You" : "Assistant"}
         </p>
 
         {isUser ? (

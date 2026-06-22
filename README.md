@@ -1,80 +1,94 @@
 # AI Chat Assistant
 
-Aplicación web de chat con inteligencia artificial que permite conversar con **ChatGPT (OpenAI)** y **Gemini (Google)** desde un mismo interfaz, con respuestas en **streaming** en tiempo real. Proyecto de portfolio full-stack construido con Next.js 14 y Vercel AI SDK.
+A full-stack web chat app that lets you talk to **ChatGPT (OpenAI)** and **Gemini (Google)** from a single interface, with **real-time streaming** responses. Built with Next.js 14 and the Vercel AI SDK.
 
-![Vista previa del chat](./docs/preview.png)
+![App preview](./docs/preview.png)
 
-**Demo en vivo:** _Próximamente — se agregará tras el deploy en Vercel_
+**Live demo:** _Coming soon — will be added after Vercel deploy_
 
 ---
 
-## Stack técnico
+## About this project
 
-| Categoría | Tecnología |
-|-----------|------------|
+This is a **portfolio project** by [Diego Gonzalez](https://github.com/DiegoWare) ([@DiegoWare](https://github.com/DiegoWare)). It demonstrates:
+
+- Multi-provider AI integration (OpenAI + Google) behind one unified API
+- Real-time streaming UX similar to ChatGPT
+- Clean full-stack architecture with Next.js App Router
+- Production-ready error handling and responsive UI
+- Markdown rendering for rich assistant responses
+
+The app itself is a standalone chat product — all portfolio context lives here in the README, not in the UI.
+
+---
+
+## Tech stack
+
+| Category | Technology |
+|----------|------------|
 | Framework | [Next.js 14](https://nextjs.org/) (App Router) |
-| Lenguaje | [TypeScript](https://www.typescriptlang.org/) |
-| Estilos | [Tailwind CSS](https://tailwindcss.com/) |
-| IA | [Vercel AI SDK](https://sdk.vercel.ai/) (`ai`) |
-| Proveedores | [@ai-sdk/openai](https://sdk.vercel.ai/providers/ai-sdk-providers/openai), [@ai-sdk/google](https://sdk.vercel.ai/providers/ai-sdk-providers/google) |
+| Language | [TypeScript](https://www.typescriptlang.org/) |
+| Styling | [Tailwind CSS](https://tailwindcss.com/) |
+| AI | [Vercel AI SDK](https://sdk.vercel.ai/) (`ai`) |
+| Providers | [@ai-sdk/openai](https://sdk.vercel.ai/providers/ai-sdk-providers/openai), [@ai-sdk/google](https://sdk.vercel.ai/providers/ai-sdk-providers/google) |
 | Markdown | [react-markdown](https://github.com/remarkjs/react-markdown) + [remark-gfm](https://github.com/remarkjs/remark-gfm) |
 | Deploy | [Vercel](https://vercel.com/) |
 
 ---
 
-## Cómo correrlo en local
+## Run locally
 
-### Requisitos previos
+### Prerequisites
 
-- [Node.js](https://nodejs.org/) 18 o superior
-- Cuenta en [OpenAI](https://platform.openai.com/) y/o [Google AI Studio](https://aistudio.google.com/)
-- API keys de los proveedores que quieras usar
+- [Node.js](https://nodejs.org/) 18+
+- [OpenAI](https://platform.openai.com/) and/or [Google AI Studio](https://aistudio.google.com/) account
+- API keys for the providers you want to use
 
-### Pasos
+### Steps
 
 ```bash
-# 1. Clonar el repositorio
-git clone https://github.com/diegogonzalez/ai-chat-assistant.git
+# 1. Clone the repository
+git clone https://github.com/DiegoWare/ai-chat-assistant.git
 cd ai-chat-assistant
 
-# 2. Instalar dependencias
+# 2. Install dependencies
 npm install
 
-# 3. Configurar variables de entorno
+# 3. Set up environment variables
 cp .env.example .env.local
 ```
 
-Edita `.env.local` y agrega tus keys:
+Add your keys to `.env.local`:
 
 ```env
 OPENAI_API_KEY=sk-proj-...
-GOOGLE_GENERATIVE_AI_API_KEY=AIza...   # o formato AQ.... de AI Studio
+GOOGLE_GENERATIVE_AI_API_KEY=AIza...   # or AQ.... format from AI Studio
 ```
 
 ```bash
-# 4. Iniciar el servidor de desarrollo
+# 4. Start the dev server
 npm run dev
 ```
 
-Abre [http://localhost:3000](http://localhost:3000) en el navegador.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### Scripts disponibles
+### Scripts
 
-| Comando | Descripción |
+| Command | Description |
 |---------|-------------|
-| `npm run dev` | Servidor de desarrollo |
-| `npm run build` | Build de producción |
-| `npm run start` | Servidor de producción |
-| `npm run lint` | Linter ESLint |
+| `npm run dev` | Development server |
+| `npm run build` | Production build |
+| `npm run start` | Production server |
+| `npm run lint` | ESLint |
 
 ---
 
-## Arquitectura
+## Architecture
 
 ```mermaid
 flowchart LR
-    A[Cliente\nReact + useChat] -->|POST /api/chat\nmessages + model| B[API Route\napp/api/chat/route.ts]
-    B --> C{Selector de modelo}
+    A[Client\nReact + useChat] -->|POST /api/chat\nmessages + model| B[API Route\napp/api/chat/route.ts]
+    B --> C{Model selector}
     C -->|openai| D[OpenAI\ngpt-4o-mini]
     C -->|gemini| E[Google Gemini\ngemini-2.5-flash]
     D --> F[streamText\nVercel AI SDK]
@@ -82,104 +96,103 @@ flowchart LR
     F -->|toDataStreamResponse| A
 ```
 
-### Flujo de una conversación
+### Request flow
 
-1. El usuario escribe un mensaje en `ChatWindow` (hook `useChat` de `ai/react`).
-2. El cliente envía el historial y el modelo seleccionado a `POST /api/chat`.
-3. La API route valida la solicitud y selecciona el proveedor en `lib/providers.ts`.
-4. `streamText` llama al modelo y devuelve tokens en streaming.
-5. El cliente renderiza la respuesta en tiempo real con markdown.
+1. User sends a message in `ChatWindow` via the `useChat` hook (`ai/react`).
+2. Client POSTs message history and selected model to `/api/chat`.
+3. API route validates the request and picks a provider in `lib/providers.ts`.
+4. `streamText` calls the model and streams tokens back.
+5. Client renders the response in real time with markdown support.
 
-### Estructura del proyecto
+### Project structure
 
 ```
 ai-chat-assistant/
 ├── app/
-│   ├── api/chat/route.ts    # Endpoint de chat con streaming
+│   ├── api/chat/route.ts    # Streaming chat endpoint
 │   ├── layout.tsx
 │   ├── page.tsx
 │   └── globals.css
 ├── components/
-│   ├── ChatWindow.tsx       # Lógica del chat (useChat)
-│   ├── MessageBubble.tsx    # Burbujas de mensaje
-│   ├── MarkdownContent.tsx  # Renderizado markdown
-│   ├── ModelSelector.tsx    # Selector ChatGPT / Gemini
-│   ├── ProjectIntro.tsx     # Panel de presentación (portfolio)
-│   └── ErrorBanner.tsx      # Errores visibles en UI
+│   ├── ChatWindow.tsx       # Chat logic (useChat)
+│   ├── MessageBubble.tsx    # Message bubbles
+│   ├── MarkdownContent.tsx  # Markdown rendering
+│   ├── ModelSelector.tsx    # ChatGPT / Gemini selector
+│   └── ErrorBanner.tsx      # User-visible errors
 ├── lib/
-│   └── providers.ts         # Configuración de modelos
+│   └── providers.ts         # Model configuration
 ├── docs/
-│   └── preview.png          # Captura para README
+│   └── preview.png
 ├── .env.example
 └── README.md
 ```
 
 ---
 
-## Decisiones técnicas clave
+## Key technical decisions
 
-### ¿Por qué Vercel AI SDK?
+### Why Vercel AI SDK?
 
-Unifica la integración con múltiples proveedores de IA bajo una misma API (`streamText`, `useChat`). Cambiar de OpenAI a Gemini es cuestión de seleccionar otro provider en `lib/providers.ts`, sin reescribir la lógica de streaming.
+It unifies multiple AI providers under one API (`streamText`, `useChat`). Switching from OpenAI to Gemini is a one-line change in `lib/providers.ts` — no need to rewrite streaming logic.
 
-### ¿Por qué streaming?
+### Why streaming?
 
-Las respuestas de los LLM pueden tardar varios segundos. El streaming mejora la percepción de velocidad al mostrar el texto token a token, igual que ChatGPT. El SDK expone esto con `toDataStreamResponse()` en el servidor y `useChat` en el cliente.
+LLM responses can take several seconds. Streaming improves perceived speed by showing text token by token, like ChatGPT. The SDK handles this with `toDataStreamResponse()` on the server and `useChat` on the client.
 
-### ¿Por qué Next.js App Router?
+### Why Next.js App Router?
 
-API routes colocalizadas con el frontend, server components donde conviene, y deploy directo en Vercel sin configuración extra.
+API routes colocated with the frontend, server components where useful, and zero-config deploy on Vercel.
 
-### Modelos elegidos
+### Model choices
 
-| Modelo | ID | Motivo |
-|--------|-----|--------|
-| ChatGPT | `gpt-4o-mini` | Buen equilibrio calidad/costo para demos |
-| Gemini | `gemini-2.5-flash` | Compatible con el plan gratuito de AI Studio |
+| Label | Model ID | Why |
+|-------|----------|-----|
+| ChatGPT | `gpt-4o-mini` | Strong quality/cost balance for demos |
+| Gemini | `gemini-2.5-flash` | Works on Google AI Studio free tier |
 
-### Sin base de datos
+### No database
 
-El historial vive en el estado del cliente (`useChat`). Suficiente para una demo de portfolio; evita complejidad innecesaria.
-
----
-
-## Qué aprendí / qué mejoraría
-
-### Aprendizajes
-
-- Integrar múltiples proveedores de IA con una abstracción común (Vercel AI SDK).
-- Manejar streaming de respuestas y errores de API (keys inválidas, rate limits) de forma visible para el usuario.
-- Diseñar una UI de chat usable en mobile y desktop con Tailwind.
-- Separar configuración de proveedores (`lib/providers.ts`) de la lógica de la API route.
-
-### Mejoras futuras
-
-- [ ] Persistencia de conversaciones (base de datos)
-- [ ] Autenticación de usuarios
-- [ ] Soporte para subida de archivos e imágenes
-- [ ] Tests automatizados (unitarios + e2e)
-- [ ] Modo claro / oscuro
-- [ ] Más proveedores (Anthropic, Mistral, etc.)
+Chat history lives in client state (`useChat`). Keeps the project focused and deployable without infra overhead.
 
 ---
 
-## Variables de entorno
+## What I learned / future improvements
 
-| Variable | Descripción | Requerida |
-|----------|-------------|-----------|
-| `OPENAI_API_KEY` | API key de OpenAI | Solo si usas ChatGPT |
-| `GOOGLE_GENERATIVE_AI_API_KEY` | API key de Google AI Studio | Solo si usas Gemini |
+### Takeaways
 
-> **Importante:** nunca subas `.env.local` a git. Las keys en producción se configuran en el dashboard de Vercel.
+- Integrating multiple AI providers through a shared abstraction (Vercel AI SDK)
+- Handling streaming responses and API errors (invalid keys, rate limits) with clear user feedback
+- Building a responsive chat UI with Tailwind and markdown rendering
+- Separating provider config (`lib/providers.ts`) from API route logic
+
+### Roadmap
+
+- [ ] Conversation persistence (database)
+- [ ] User authentication
+- [ ] File and image uploads
+- [ ] Automated tests (unit + e2e)
+- [ ] Light / dark mode toggle
+- [ ] More providers (Anthropic, Mistral, etc.)
 
 ---
 
-## Autor
+## Environment variables
 
-**Diego Gonzalez** — proyecto de portfolio para demostrar desarrollo full-stack con IA.
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `OPENAI_API_KEY` | OpenAI API key | Only if using ChatGPT |
+| `GOOGLE_GENERATIVE_AI_API_KEY` | Google AI Studio API key | Only if using Gemini |
+
+> **Important:** never commit `.env.local` to git. Set production keys in the Vercel dashboard.
 
 ---
 
-## Licencia
+## Author
+
+**Diego Gonzalez** — [github.com/DiegoWare](https://github.com/DiegoWare)
+
+---
+
+## License
 
 MIT

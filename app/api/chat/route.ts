@@ -31,34 +31,34 @@ function getHttpStatusFromError(error: unknown): number {
 
 function getErrorMessage(error: unknown): string {
   if (LoadAPIKeyError.isInstance(error)) {
-    return "API key no configurada o inválida. Verifica tus variables de entorno.";
+    return "API key is missing or invalid. Check your environment variables.";
   }
 
   if (APICallError.isInstance(error)) {
     if (error.statusCode === 401 || error.statusCode === 403) {
-      return "API key no válida o sin permisos. Revisa tu configuración.";
+      return "Invalid API key or insufficient permissions. Check your configuration.";
     }
 
     if (error.statusCode === 429) {
-      return "Límite de solicitudes alcanzado. Intenta de nuevo en unos minutos.";
+      return "Rate limit reached. Please try again in a few minutes.";
     }
 
     if (error.message) {
       return error.message;
     }
 
-    return "Error al comunicarse con el proveedor de IA.";
+    return "Failed to communicate with the AI provider.";
   }
 
   if (error instanceof Error) {
     if (error.name === "AbortError" || error.message.toLowerCase().includes("timeout")) {
-      return "La solicitud tardó demasiado. Intenta de nuevo.";
+      return "The request timed out. Please try again.";
     }
 
     return error.message;
   }
 
-  return "Ocurrió un error inesperado. Intenta de nuevo.";
+  return "An unexpected error occurred. Please try again.";
 }
 
 function errorResponse(error: unknown) {
@@ -76,7 +76,7 @@ export async function POST(req: Request) {
       body = await req.json();
     } catch {
       return Response.json(
-        { error: "Cuerpo de la solicitud inválido." },
+        { error: "Invalid request body." },
         { status: 400 },
       );
     }
@@ -88,7 +88,7 @@ export async function POST(req: Request) {
 
     if (!messages || !Array.isArray(messages) || messages.length === 0) {
       return Response.json(
-        { error: "Se requiere al menos un mensaje." },
+        { error: "At least one message is required." },
         { status: 400 },
       );
     }
@@ -96,7 +96,7 @@ export async function POST(req: Request) {
     if (!isChatModelId(model)) {
       return Response.json(
         {
-          error: `Modelo no válido. Opciones: ${Object.keys(CHAT_MODELS).join(", ")}`,
+          error: `Invalid model. Options: ${Object.keys(CHAT_MODELS).join(", ")}`,
         },
         { status: 400 },
       );

@@ -17,7 +17,7 @@ export default function ModelSelector({
         htmlFor="model-select"
         className="text-xs font-medium text-slate-400"
       >
-        Modelo
+        Model
       </label>
       <select
         id="model-select"

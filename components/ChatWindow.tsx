@@ -8,9 +8,9 @@ import ModelSelector from "@/components/ModelSelector";
 import type { ChatModelId } from "@/lib/providers";
 
 const SUGGESTED_PROMPTS = [
-  "Explícame qué es el Vercel AI SDK y para qué sirve",
-  "Dame 3 ideas de proyectos con IA para un portfolio",
-  "¿Cuál es la diferencia entre REST y streaming en APIs de chat?",
+  "Explain what the Vercel AI SDK is and why it's useful",
+  "What are three creative uses for streaming AI APIs?",
+  "What's the difference between REST and streaming in chat APIs?",
 ];
 
 async function parseApiError(response: Response): Promise<string | null> {
@@ -48,12 +48,12 @@ export default function ChatWindow() {
       if (!response.ok) {
         const message =
           (await parseApiError(response)) ??
-          "No se pudo conectar con el servidor. Intenta de nuevo.";
+          "Could not connect to the server. Please try again.";
         setApiError(message);
       }
     },
     onError: (chatError) => {
-      setApiError(chatError.message || "Ocurrió un error inesperado.");
+      setApiError(chatError.message || "An unexpected error occurred.");
     },
     onFinish: () => {
       clearError();
@@ -113,32 +113,36 @@ export default function ChatWindow() {
   };
 
   return (
-    <div className="flex min-h-[70dvh] flex-1 flex-col lg:h-dvh">
+    <div className="flex h-dvh flex-col">
       {displayError && (
         <ErrorBanner message={displayError} onDismiss={clearError} />
       )}
 
-      <header className="flex items-center justify-between gap-4 border-b border-slate-800 px-4 py-4 sm:px-6">
-        <div>
-          <h2 className="text-base font-semibold text-slate-100">Chat en vivo</h2>
-          <p className="text-xs text-slate-500">
-            Respuestas en streaming · historial en sesión
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <ModelSelector
-            value={model}
-            onChange={setModel}
-            disabled={isBusy}
-          />
-          <button
-            type="button"
-            onClick={handleNewConversation}
-            disabled={isBusy}
-            className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-xs font-medium text-slate-200 transition hover:border-slate-600 hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50 sm:text-sm"
-          >
-            Nueva conversación
-          </button>
+      <header className="border-b border-slate-800 px-4 py-4 sm:px-6">
+        <div className="mx-auto flex max-w-3xl flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-lg font-semibold tracking-tight text-slate-100 sm:text-xl">
+              AI Chat Assistant
+            </h1>
+            <p className="text-xs text-slate-500 sm:text-sm">
+              Chat with ChatGPT or Gemini · streaming responses
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <ModelSelector
+              value={model}
+              onChange={setModel}
+              disabled={isBusy}
+            />
+            <button
+              type="button"
+              onClick={handleNewConversation}
+              disabled={isBusy}
+              className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-xs font-medium text-slate-200 transition hover:border-slate-600 hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50 sm:text-sm"
+            >
+              New chat
+            </button>
+          </div>
         </div>
       </header>
 
@@ -148,7 +152,7 @@ export default function ChatWindow() {
             <div className="space-y-4">
               <div className="rounded-2xl border border-dashed border-slate-700 bg-slate-900/40 p-8 text-center">
                 <p className="text-sm text-slate-300">
-                  Envía un mensaje o elige una sugerencia para empezar
+                  Send a message or pick a suggestion to get started
                 </p>
               </div>
               <div className="flex flex-wrap justify-center gap-2">
@@ -193,7 +197,7 @@ export default function ChatWindow() {
                     <span className="h-2 w-2 animate-bounce rounded-full bg-violet-400 [animation-delay:-0.15s]" />
                     <span className="h-2 w-2 animate-bounce rounded-full bg-violet-400" />
                   </span>
-                  <span>{status === "submitted" ? "Pensando..." : "Escribiendo..."}</span>
+                  <span>{status === "submitted" ? "Thinking..." : "Writing..."}</span>
                 </div>
               </div>
             )}
@@ -210,7 +214,7 @@ export default function ChatWindow() {
               onChange={onInputChange}
               disabled={isBusy}
               rows={1}
-              placeholder={isBusy ? "Esperando respuesta..." : "Escribe tu mensaje..."}
+              placeholder={isBusy ? "Waiting for response..." : "Type your message..."}
               aria-invalid={emptySubmitAttempt}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
@@ -233,12 +237,12 @@ export default function ChatWindow() {
               disabled={isBusy || !input.trim()}
               className="rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 px-5 py-3 text-sm font-medium text-white shadow-lg shadow-violet-900/30 transition hover:from-violet-500 hover:to-fuchsia-500 disabled:cursor-not-allowed disabled:opacity-40"
             >
-              Enviar
+              Send
             </button>
           </div>
           {emptySubmitAttempt && (
             <p className="mt-2 text-xs text-amber-400">
-              Escribe un mensaje antes de enviar.
+              Type a message before sending.
             </p>
           )}
         </form>

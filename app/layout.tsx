@@ -8,13 +8,13 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "AI Chat Assistant | Portfolio",
+  title: "AI Chat Assistant",
   description:
-    "Chat web con streaming multi-proveedor (ChatGPT y Gemini). Proyecto full-stack con Next.js 14, TypeScript y Vercel AI SDK.",
+    "Chat with ChatGPT and Gemini in real time. Multi-provider AI chat with streaming responses.",
   openGraph: {
     title: "AI Chat Assistant",
     description:
-      "Demo interactiva de chat con IA — streaming en tiempo real con OpenAI y Google Gemini.",
+      "Chat with ChatGPT and Gemini using real-time streaming.",
     type: "website",
   },
 };
@@ -25,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className="scroll-smooth">
+    <html lang="en" className="scroll-smooth">
       <body
         className={`${inter.className} min-h-dvh bg-slate-950 text-slate-100 antialiased`}
       >
