@@ -81,10 +81,9 @@ export async function POST(req: Request) {
       );
     }
 
-    const { messages, model, systemPrompt } = body as {
+    const { messages, model } = body as {
       messages?: Message[];
       model?: unknown;
-      systemPrompt?: string;
     };
 
     if (!messages || !Array.isArray(messages) || messages.length === 0) {
@@ -105,7 +104,6 @@ export async function POST(req: Request) {
 
     const result = streamText({
       model: getModel(model),
-      system: systemPrompt?.trim() || undefined,
       messages: convertToCoreMessages(messages),
     });
 

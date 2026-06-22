@@ -1,3 +1,122 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222 47% 6%;
+    --foreground: 210 40% 98%;
+    --card: 222 47% 9%;
+    --card-border: 217 33% 17%;
+    --accent: 262 83% 58%;
+    --accent-soft: 262 83% 58% / 0.15;
+    --muted: 215 20% 65%;
+  }
+}
+
+@layer components {
+  .prose-chat {
+    @apply text-sm leading-relaxed;
+  }
+
+  .prose-chat p {
+    @apply my-2 first:mt-0 last:mb-0;
+  }
+
+  .prose-chat ul,
+  .prose-chat ol {
+    @apply my-2 list-inside space-y-1 pl-1;
+  }
+
+  .prose-chat ul {
+    @apply list-disc;
+  }
+
+  .prose-chat ol {
+    @apply list-decimal;
+  }
+
+  .prose-chat strong {
+    @apply font-semibold;
+  }
+
+  .prose-chat code {
+    @apply rounded px-1.5 py-0.5 font-mono text-[0.85em];
+  }
+
+  .prose-chat pre {
+    @apply my-3 overflow-x-auto rounded-xl p-4 font-mono text-xs;
+  }
+
+  .prose-chat pre code {
+    @apply bg-transparent p-0;
+  }
+
+  .prose-chat a {
+    @apply underline underline-offset-2;
+  }
+
+  .prose-chat blockquote {
+    @apply my-2 border-l-2 pl-3 italic opacity-90;
+  }
+
+  .prose-chat h1,
+  .prose-chat h2,
+  .prose-chat h3 {
+    @apply mb-2 mt-4 font-semibold first:mt-0;
+  }
+
+  .prose-chat h1 {
+    @apply text-base;
+  }
+
+  .prose-chat h2 {
+    @apply text-sm;
+  }
+
+  .prose-chat h3 {
+    @apply text-sm;
+  }
+
+  .prose-assistant code {
+    @apply bg-slate-100 text-violet-700;
+  }
+
+  .prose-assistant pre {
+    @apply border border-slate-200 bg-slate-50 text-slate-800;
+  }
+
+  .prose-assistant a {
+    @apply text-violet-600;
+  }
+
+  .prose-assistant blockquote {
+    @apply border-violet-300 text-slate-600;
+  }
+
+  .prose-user code {
+    @apply bg-white/15 text-white;
+  }
+
+  .prose-user pre {
+    @apply border border-white/20 bg-black/20 text-white;
+  }
+
+  .prose-user a {
+    @apply text-violet-200;
+  }
+
+  .prose-user blockquote {
+    @apply border-white/40 text-violet-100;
+  }
+}
+
+@layer utilities {
+  .gradient-text {
+    @apply bg-gradient-to-r from-violet-400 via-fuchsia-400 to-cyan-400 bg-clip-text text-transparent;
+  }
+
+  .glass-panel {
+    @apply border border-white/10 bg-white/5 backdrop-blur-md;
+  }
+}

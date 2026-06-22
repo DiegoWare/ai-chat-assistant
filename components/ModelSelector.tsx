@@ -12,8 +12,11 @@ export default function ModelSelector({
   disabled = false,
 }: ModelSelectorProps) {
   return (
-    <div className="flex flex-col gap-1">
-      <label htmlFor="model-select" className="text-xs font-medium text-gray-500">
+    <div className="flex items-center gap-2">
+      <label
+        htmlFor="model-select"
+        className="text-xs font-medium text-slate-400"
+      >
         Modelo
       </label>
       <select
@@ -21,7 +24,7 @@ export default function ModelSelector({
         value={value}
         onChange={(e) => onChange(e.target.value as ChatModelId)}
         disabled={disabled}
-        className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-500"
+        className="rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-100 shadow-sm transition focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {(Object.entries(CHAT_MODELS) as [ChatModelId, { label: string }][]).map(
           ([id, { label }]) => (
