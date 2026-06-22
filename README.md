@@ -187,6 +187,33 @@ Chat history lives in client state (`useChat`). Keeps the project focused and de
 
 ---
 
+## Deploy
+
+### GitHub
+
+```bash
+gh auth login
+cd ~/Desktop/ai-chat-assistant
+gh repo create DiegoWare/ai-chat-assistant --public --source=. --remote=origin --push
+```
+
+### Vercel
+
+1. Go to [vercel.com/new](https://vercel.com/new) and import `DiegoWare/ai-chat-assistant`
+2. Add environment variables: `OPENAI_API_KEY`, `GOOGLE_GENERATIVE_AI_API_KEY`
+3. Deploy — Vercel auto-detects Next.js
+
+Or via CLI:
+
+```bash
+npx vercel login
+npx vercel --prod
+```
+
+After deploy, update the **Live demo** link at the top of this README.
+
+---
+
 ## Author
 
 **Diego Gonzalez** — [github.com/DiegoWare](https://github.com/DiegoWare)
