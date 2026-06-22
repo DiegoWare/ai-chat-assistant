@@ -14,7 +14,7 @@ export const CHAT_MODELS: Record<
   },
   gemini: {
     label: "Gemini",
-    modelId: "gemini-2.0-flash",
+    modelId: "gemini-2.5-flash",
   },
 };
 
